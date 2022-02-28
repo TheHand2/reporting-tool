@@ -3,3 +3,10 @@ export interface Response<T> {
 	data: T[];
 	error: any;
 }
+
+export interface ReportRequestParams {
+	from?: string;
+	to?: string;
+	projectId?: string;
+	gatewayId?: string;
+}

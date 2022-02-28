@@ -1,3 +1,7 @@
+import { Gateway } from "../../types/gateway";
+import { Project } from "../../types/project";
+import { Report } from "../../types/report";
+
 export enum ReportType {
 	PROJECT_ONLY,
 	GATEWAY_ONLY,
@@ -13,4 +17,11 @@ export namespace ReportType {
 		if (!projectId && gatewayId) return ReportType.GATEWAY_ONLY;
 		return ReportType.PROJECT_AND_GATEWAY;
 	}
+}
+
+export interface GroupItem {
+	amount: number;
+	data: Report[];
+	item: Gateway | Project;
+	color: string;
 }

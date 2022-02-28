@@ -4,7 +4,7 @@ import DatePicker from "../UI/DatePicker";
 import SelectFilter from "../UI/Select";
 import * as styles from "./styles";
 import { FilterParams } from "./types";
-import useReactSelectOptions from "./useReactSelectOptions";
+import useReactSelectOptions from "./hooks/useReactSelectOptions";
 
 type FilterParamKey = keyof FilterParams;
 
@@ -47,7 +47,7 @@ const Filter: FC<FilterProps> = ({ onFilter, params }) => {
 		<styles.FilterContainer>
 			<styles.FilterItem>
 				<SelectFilter
-					selectedValue={filterParams.projectId}
+					selectedValue={filterParams?.projectId}
 					options={projectOptions}
 					onChange={(option) => updateFilter("projectId", option.value)}
 				/>
@@ -55,7 +55,7 @@ const Filter: FC<FilterProps> = ({ onFilter, params }) => {
 
 			<styles.FilterItem>
 				<SelectFilter
-					selectedValue={filterParams.gatewayId}
+					selectedValue={filterParams?.gatewayId}
 					options={gatewayOptions}
 					onChange={(option) => updateFilter("gatewayId", option.value)}
 				/>
@@ -63,8 +63,8 @@ const Filter: FC<FilterProps> = ({ onFilter, params }) => {
 
 			<styles.FilterItem width={118}>
 				<DatePicker
-					selectedDate={filterParams.from}
-					maxDate={filterParams.to}
+					selectedDate={filterParams?.from}
+					maxDate={filterParams?.to}
 					onDateSelect={(date) => updateFilter("from", date)}
 					placeholder={"From date"}
 				/>
@@ -72,8 +72,8 @@ const Filter: FC<FilterProps> = ({ onFilter, params }) => {
 
 			<styles.FilterItem width={118}>
 				<DatePicker
-					selectedDate={filterParams.to}
-					minDate={filterParams.from}
+					selectedDate={filterParams?.to}
+					minDate={filterParams?.from}
 					onDateSelect={(date) => updateFilter("to", date)}
 					placeholder={"To date"}
 				/>

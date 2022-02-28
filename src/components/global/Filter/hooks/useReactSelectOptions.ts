@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { Gateway } from "../../../types/gateway";
-import { Project } from "../../../types/project";
-import { SelectOption } from "../UI/Select";
+import { Gateway } from "../../../../types/gateway";
+import { Project } from "../../../../types/project";
+import { SelectOption } from "../../UI/Select";
 
 export type IdKey = keyof Project | keyof Gateway;
 

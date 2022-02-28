@@ -16,8 +16,8 @@ interface AccordionElementProps {
 const AccordionElement: FC<AccordionElementProps> = ({ items }) => {
 	return (
 		<styles.AccordionContainer allowZeroExpanded allowMultipleExpanded>
-			{items.map((item) => (
-				<AccordionItem key={item.titles[0]}>
+			{items.map((item, index) => (
+				<AccordionItem key={item.titles[0] + index}>
 					<AccordionItemHeading>
 						<styles.AccordionElementButton>
 							{item.titles.map((title, index) => (

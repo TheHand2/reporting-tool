@@ -1,51 +1,29 @@
 import moment from "moment";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useAsync } from "react-use";
-import { AccordionElementProp } from "../../components/global/Accordion";
-import DataTable, { TableColumn } from "../../components/global/DataTable";
+import { useAsync, useAsyncFn } from "react-use";
 import Filter, { FilterParams } from "../../components/global/Filter";
 import Page from "../../components/global/Page";
 import { fetchGateways } from "../../services/api/gateway";
 import { fetchProjects } from "../../services/api/project";
+import { fetchReport } from "../../services/api/report";
+import DefaultView from "./components/DefaultView";
+import EmptyView from "./components/EmptyView";
+import ProjectAndGatewayView from "./components/ProjectAndGatewayView";
+import ProjectOrGatewayView from "./components/ProjectOrGatewayView";
 import ReportsContext from "./ReportsContenxt";
-import * as styles from "./styles";
 import { ReportType } from "./types";
-
-const columnsData: TableColumn[] = [
-	{
-		name: "Date",
-		dataKey: "date",
-	},
-	{
-		name: "Transaction ID",
-		dataKey: "transactionId",
-	},
-	{
-		name: "Amount",
-		dataKey: "amount",
-	},
-];
-
-const accordionItems: AccordionElementProp[] = [
-	{
-		titles: ["Gateway 1", "63,000 USD"],
-		component: (
-			<DataTable
-				columns={columnsData}
-				data={[{ date: "2/2/2/", amount: "2", transactionId: "21321" }]}
-			/>
-		),
-	},
-];
 
 /**
  * Reports page
  */
 const ReportsPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [filters, setFilters] = useState<FilterParams>({});
+
 	const { loading: gateWaysLoading, value: gateWaysResponse } = useAsync(fetchGateways);
 	const { loading: projectsLoading, value: projectsResponse } = useAsync(fetchProjects);
+	const [{ loading: reportLoading, value: reportResponse }, loadReport] = useAsyncFn(fetchReport);
 
 	// Handle filter change
 	// Modify params object and set in url as searchParams
@@ -63,53 +41,72 @@ const ReportsPage = () => {
 	}, []);
 
 	// Get searchParams from url and modify
-	const filterParams: FilterParams = useMemo(() => {
+	useEffect(() => {
 		const fromDate = searchParams.get("from");
 		const toDate = searchParams.get("to");
 		const gatewayId = searchParams.get("gatewayId") ?? undefined;
 		const projectId = searchParams.get("projectId") ?? undefined;
-		return {
+
+		setFilters({
 			from: fromDate ? moment(fromDate, "YYYY-MM-DD").toDate() : undefined,
 			to: toDate ? moment(toDate, "YYYY-MM-DD").toDate() : undefined,
 			gatewayId,
 			projectId,
-		};
+		});
+
+		loadReport({ from: fromDate ?? undefined, to: toDate ?? undefined, gatewayId, projectId });
 	}, [searchParams]);
 
 	// Set report type based on filter selection
-	const reportType = useMemo(() => {
-		return ReportType.selectType(filterParams.projectId, filterParams.gatewayId);
-	}, [filterParams]);
+	const reportType = useMemo(
+		() => ReportType.selectType(filters.projectId, filters.gatewayId),
+		[filters.projectId, filters.gatewayId]
+	);
+
+	// Gateway which is selected in filter
+	const selectedGateway = useMemo(
+		() => gateWaysResponse?.data.find((gateway) => gateway.gatewayId === filters.gatewayId),
+		[gateWaysResponse?.data, filters.gatewayId]
+	);
+
+	// Project which is selected in filter
+	const selectedProject = useMemo(
+		() => projectsResponse?.data.find((project) => project.projectId === filters.projectId),
+		[projectsResponse?.data, filters.projectId]
+	);
 
 	// Render report component based on type
 	const reportComponent = useMemo(() => {
 		switch (reportType) {
 			case ReportType.PROJECT_ONLY:
-				return <>{ReportType.PROJECT_ONLY}</>;
+				return <ProjectOrGatewayView />;
 
 			case ReportType.GATEWAY_ONLY:
-				return <>{ReportType.GATEWAY_ONLY}</>;
+				return <ProjectOrGatewayView />;
 
 			case ReportType.PROJECT_AND_GATEWAY:
-				return <>{ReportType.PROJECT_AND_GATEWAY}</>;
+				return <ProjectAndGatewayView />;
 			default:
-				return <>{ReportType.NONE}</>;
+				return <DefaultView />;
 		}
 	}, [reportType]);
 
 	return (
 		<ReportsContext.Provider
 			value={{
-				reportType,
 				gateways: gateWaysResponse?.data,
 				projects: projectsResponse?.data,
+				report: reportResponse?.data,
+				reportType,
+				selectedGateway,
+				selectedProject,
 			}}>
 			<Page
 				title={"Reports"}
 				subTitle={"Easily generate a report of your transactions"}
-				loading={gateWaysLoading || projectsLoading}
-				actionComponent={<Filter params={filterParams} onFilter={handleFilterChange} />}>
-				{reportComponent}
+				loading={gateWaysLoading || projectsLoading || reportLoading}
+				actionComponent={<Filter params={filters} onFilter={handleFilterChange} />}>
+				{!reportResponse?.data.length ? <EmptyView /> : reportComponent}
 			</Page>
 		</ReportsContext.Provider>
 	);

@@ -1,29 +1,34 @@
-import { FC } from "react";
 import * as styles from "./styles";
 import { TableColumn } from "./types";
 
-interface DataTableProps {
+interface DataTableProps<T> {
 	/** Columns of the table */
-	columns: TableColumn[];
+	columns: TableColumn<T>[];
 	/** Table data which will be rendered */
-	data: any;
+	data?: T[];
+	/**
+	 * A function to extract the unique key of each item in the list.
+	 */
+	itemUniqueKey: (item: T, index: number) => string;
 }
 
-const DataTable: FC<DataTableProps> = ({ columns, data }) => {
+const DataTable = <T,>({ columns, data, itemUniqueKey }: DataTableProps<T>) => {
 	return (
 		<styles.StyledTable>
 			<thead>
 				<tr>
-					{columns.map((column) => (
-						<th key={column.dataKey}>{column.name}</th>
+					{columns.map((column, index) => (
+						<th key={column.name}>{column.name}</th>
 					))}
 				</tr>
 			</thead>
 			<tbody>
-				{data.map((item: any) => (
-					<tr key={item.transactionId}>
-						{columns.map((column) => (
-							<td key={column.dataKey}>{item[column.dataKey]}</td>
+				{data?.map((item, index) => (
+					<tr key={itemUniqueKey(item, index)}>
+						{columns.map((column, index) => (
+							<td key={column.name}>
+								{column.render ? column.render(item) : item[column.dataKey]}
+							</td>
 						))}
 					</tr>
 				))}
