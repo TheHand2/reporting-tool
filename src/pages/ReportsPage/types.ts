@@ -20,8 +20,12 @@ export namespace ReportType {
 }
 
 export interface GroupItem {
+	/** Total amount */
 	amount: number;
+	/** Group data */
 	data: Report[];
+	/** Group data main item which includes information about name and etc */
 	item: Gateway | Project;
+	/** Color for legend */
 	color: string;
 }

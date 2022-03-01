@@ -11,9 +11,15 @@ import * as styles from "../../styles";
 import { GroupItem, ReportType } from "../../types";
 import normalizeNumber from "../../utils/normalizeNumber";
 
+/**
+ * ProjectOrGateway report view component
+ * ProjectOrGatewayView view is displayed when we have selected project or gateway in filter
+ */
 const ProjectOrGatewayView: FC = () => {
 	const { reportType, projects, report, gateways, selectedGateway, selectedProject } =
 		useContext(ReportsContext);
+
+	// Detect if we have project selected in filter
 	const isProjectOnly = reportType === ReportType.PROJECT_ONLY;
 
 	const groupedData: GroupItem[] = useGroupData({
@@ -100,7 +106,7 @@ const ProjectOrGatewayView: FC = () => {
 					<styles.ChartLegendContainer>
 						{chartData.map((chartItem) => (
 							<styles.ChartLegendItem key={chartItem.color}>
-								<styles.ChartLegendIcon color={chartItem.color}></styles.ChartLegendIcon>
+								<styles.ChartLegendIcon color={chartItem.color} />
 								{chartItem.name}
 							</styles.ChartLegendItem>
 						))}

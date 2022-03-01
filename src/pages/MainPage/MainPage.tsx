@@ -3,6 +3,6 @@
  * Renders as initial page
  */
 const MainPage = () => {
-	return <>TEST</>;
+	return <>Hello, this is main page</>;
 };
 export default MainPage;

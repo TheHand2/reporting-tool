@@ -54,6 +54,7 @@ const ReportsPage = () => {
 			projectId,
 		});
 
+		// Load report data
 		loadReport({ from: fromDate ?? undefined, to: toDate ?? undefined, gatewayId, projectId });
 	}, [searchParams]);
 

@@ -10,6 +10,10 @@ import * as styles from "../../styles";
 import { GroupItem } from "../../types";
 import normalizeNumber from "../../utils/normalizeNumber";
 
+/**
+ * Report data default view component
+ * Default view is displayed when we have not selected project or gateway
+ */
 const DefaultView: FC = () => {
 	const { projects, gateways, report } = useContext(ReportsContext);
 	const groupedData: GroupItem[] = useGroupData({

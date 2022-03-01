@@ -1,6 +1,11 @@
 import { FC } from "react";
 import * as styles from "../../styles";
 import emptyDataImage from "../../../../assets/images/emptyData.svg";
+
+/**
+ * Empty report view
+ * Empty view is displayed when we have no report data
+ */
 const EmptyView: FC = () => {
 	return (
 		<styles.EmptyDataContainer>

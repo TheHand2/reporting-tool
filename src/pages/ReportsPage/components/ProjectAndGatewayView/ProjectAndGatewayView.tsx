@@ -7,10 +7,12 @@ import ReportsContext from "../../ReportsContenxt";
 import * as styles from "../../styles";
 import normalizeNumber from "../../utils/normalizeNumber";
 
+/**
+ * ProjectAndGateway report view component
+ * ProjectAndGateway view is displayed when we have selected project and gateway in filter
+ */
 const ProjectAndGatewayView: FC = () => {
 	const { selectedProject, selectedGateway, report } = useContext(ReportsContext);
-
-	console.log(report);
 
 	const totalAmount = useGroupDataTotal(report);
 	const columnsData: TableColumn<Report>[] = [
